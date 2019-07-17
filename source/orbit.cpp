@@ -6,13 +6,22 @@
 #include "ReadAlign.h"
 #include "Transcriptome.h"
 #include "Variation.h"
+#include "orbit.h"
 
-class Aligner
+// in orbit.h
+extern "C" {
+    struct Aligner;
+    char* align_read(...);
+    Aligner* init_aligner(...);
+    void destroy_aligner(Aligner*);
+}
+
+
+struct Aligner
 {
-    public:
-        Parameters *p;
-        Genome *g;
-        ReadAlign *ra;
+    Parameters *p;
+    Genome *g;
+    ReadAlign *ra;
    
     Aligner(int, char* argIn[]) {
         
