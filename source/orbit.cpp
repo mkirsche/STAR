@@ -11,15 +11,26 @@ class Aligner
 {
     public:
         Parameters *p;
+        Genome *g;
         ReadAlign *ra;
+   
+    Aligner(int, char* argIn[]) {
+        
+    }
+    
+    ~Aligner() {
+        delete ra;
+        delete g;
+        delete p;
+    }
 };
 
-string align_read(Aligner a, char **Read1, char **Qual1, unsigned long long read_length)
+string align_read(Aligner* a, char *Read1, char *Qual1, unsigned long long read_length)
 {
     a.p->readNmates = 1;
     a.ra->readNmates = 1;
-    a.ra->Read0 = Read1;
-    a.ra->Qual0 = Qual1;
+    a.ra->Read0 = &Read1;
+    a.ra->Qual0 = &Qual1;
     a.ra->Lread = read_length;
     a.ra->readLength[0] = read_length;
     a.ra->readLength[1] = read_length;
@@ -29,31 +40,32 @@ string align_read(Aligner a, char **Read1, char **Qual1, unsigned long long read
         return "";
     }
     string str = a.ra->outputAlignments();
-    return str;
+    char* ret = (char*) malloc((str.length() + 1));
+    strncpy(
+    return ret;
 }
 
-Aligner init(int argInN, char* argIn[])
+Aligner* init_aligner(int argInN, char* argIn[])
 {
-    Parameters *P = (Parameters*)malloc(sizeof(Parameters));
-    new(P) Parameters();
+    return new Aligner(argc, argv);
+    auto *P = new Parameters();
     P->inputParameters(argInN, argIn);
 
-    Genome *mainGenome = (Genome*)malloc(sizeof(Genome));
-    new(mainGenome) Genome(*P);
+    Genome *mainGenome = new Genome(*P);
     mainGenome->genomeLoad();
 
-    Transcriptome *mainTranscriptome = NULL;
+    Transcriptome *mainTranscriptome = nullptr;
 
     mainGenome->Var = new Variation(*P, mainGenome->chrStart, mainGenome->chrNameIndex);
 
-    ReadAlign *RA = (ReadAlign*)malloc(sizeof(ReadAlign));
-    new(RA) ReadAlign(*P, *mainGenome, mainTranscriptome, 0);
+    ReadAlign *RA = new ReadAlign(*P, *mainGenome, mainTranscriptome, 0);
 
-    Aligner res;
-    res.ra = RA;
-    res.p = P;
+    Aligner res = { RA, P };
     return res;
 }
+        
+void destroy_aligner(Aligner* aln) { delete aln; }
+        
 
 int main()
 {
@@ -68,7 +80,7 @@ int main()
             "--outSAMorder", "PairedKeepInputOrder",
     };
     int len = sizeof(arr) / sizeof(arr[0]);
-    Aligner a = init(len, arr);
+    Aligner *a = init(len, arr);
 
     std::string line;
     std::ifstream infile("1.fastq");
@@ -100,5 +112,6 @@ int main()
     }
     free(curRead[0]);
     free(curRead);
+    delete a;
     return 0;
 }
