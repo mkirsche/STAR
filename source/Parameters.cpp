@@ -1472,7 +1472,6 @@ void Parameters::inputParameters (int argInN, char* argIn[]) {//input parameters
     ////////////////////////////////////////////////
     inOut->logMain << "Finished loading and checking parameters\n" <<flush;
 
-    printf("parameters readNmates %llu\n", readNmates);
 
 };
 
