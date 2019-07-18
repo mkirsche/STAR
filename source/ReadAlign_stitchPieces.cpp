@@ -49,6 +49,7 @@ void ReadAlign::stitchPieces(char **R, uint Lread) {
             for (uint iSA=PC[iP][PC_SAstart]; iSA<=PC[iP][PC_SAend]; iSA++) {//scan through all alignments of this piece
 
                 uint a1 = mapGen.SA[iSA];
+                //printf("a1 %llu\n", a1);
                 uint aStr = a1 >> mapGen.GstrandBit;
                 a1 &= mapGen.GstrandMask; //remove strand bit
 
@@ -286,13 +287,14 @@ std::time(&timeStart);
         trA.Str = WC[iW][WC_Str];
         trA.roStr = revertStrand ? 1-trA.Str : trA.Str; //original strand of the read
         trA.maxScore=0;
-
+        //printf("something something trAll %llu\n", trNtotal);
         trAll[iW1]=trArrayPointer+trNtotal;
         if (trNtotal+P.alignTranscriptsPerWindowNmax >= P.alignTranscriptsPerReadNmax) {
             P.inOut->logMain << "WARNING: not enough space allocated for transcript. Did not process all windows for read "<< readName+1 <<endl;
             P.inOut->logMain <<"   SOLUTION: increase alignTranscriptsPerReadNmax and re-run\n" << flush;
             break;
         };
+        //printf("trA %llu\n", trA.Chr);
         *(trAll[iW1][0])=trA;
         nWinTr[iW1]=0; //initialize number of transcripts per window
 
@@ -328,7 +330,7 @@ std::time(&timeStart);
         if (trAll[iW1][0]->maxScore > trBest->maxScore || (trAll[iW1][0]->maxScore == trBest->maxScore && trAll[iW1][0]->gLength < trBest->gLength ) ) {
             trBest=trAll[iW1][0];
         };
-
+        //printf("why not add here %llu\n", nWinTr[iW1]);
         trNtotal += nWinTr[iW1];
         iW1++;
     };

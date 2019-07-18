@@ -14,10 +14,13 @@ int ReadAlign::mapOneRead() {
     revertStrand = false; //the 2nd read is awlays on opposite strand. 1st and 2nd reads have already been reversed.
 
     if (Lread>0) {
+        //printf("splitting\n");
         Nsplit=qualitySplit(Read1[0], Qual1[0], Lread, P.Qsplit, P.maxNsplit, P.minLsplit, splitR);
     } else {
         Nsplit=0;
     };
+    //printf("read %s; qual %s\n", Read1[0], Qual1[0]);
+    //printf("Nsplit %llu\n", Nsplit);
 
     resetN(); //reset aligns counters to 0
 
@@ -100,6 +103,7 @@ int ReadAlign::mapOneRead() {
         nW=0;
     } else if (Nsplit>0 && nA>0) {//otherwise there are no good pieces, or all pieces map too many times: read cannot be mapped
 //         qsort((void*) PC, nP, sizeof(uint)*PC_SIZE, funCompareUint2);//sort PC by rStart and length
+        //printf("stitching\n");
         stitchPieces(Read1, Lread);
         
     };
