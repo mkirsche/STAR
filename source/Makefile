@@ -55,6 +55,8 @@ OBJECTS = ParametersSolo.o SoloRead.o SoloRead_record.o \
 %.o : %.cpp
 	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $<
 
+all: liborbit.a
+
 clean:
 	rm -f *.o *.a
 
